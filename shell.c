@@ -22,28 +22,31 @@ int main(void)
     char theCommand[MAX_LINE];
     fgets(theCommand, sizeof(theCommand), stdin);
 
-    char *word = strtok(theCommand, " ");
+    char *word = strtok(theCommand, " \n");
     args[0] = word;
-    word = strtok(NULL, " ");
+    word = strtok(NULL, " \n");
     args[1] = word;
-    word = strtok(NULL, " ");
+    word = strtok(NULL, " \n");
     args[2] = word;
 
     //printf("%s %s", args[0], args[1]);
     char str1[] = "exit";
-    int compare = strcmp(args[0], exit);
+    int compare = strcmp(args[0], str1);
 
     if(compare == 0) {
       printf("exit");
     }
 
-/*
-    if(args[2] == "&") {
-      printf("&");
-    } else {
-      printf("not &");
+    if(args[2] != NULL) {
+      char str2[] = "&";
+      int compare2 = strcmp(args[2], str2);
+
+      if(compare2 == 0) {
+        printf("&");
+      }
     }
-*/
+    
+
     //printf("%c\n", theCommand[0]);
     should_run = 0;
 
