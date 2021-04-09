@@ -14,6 +14,7 @@ int main(void)
 {
   char *args[MAX_LINE/2 + 1]; /* command line arguments */
   int should_run = 1; /* flag to determine when to exit program */
+  int status;
 
   while (should_run) {
     printf("osh>");
@@ -32,26 +33,29 @@ int main(void)
     //printf("%s %s", args[0], args[1]);
     char str1[] = "exit";
     int compare = strcmp(args[0], str1);
-
-    if(compare == 0) {
-      printf("exit");
-    }
-
-    if(args[2] != NULL) {
-      char str2[] = "&";
-      int compare2 = strcmp(args[2], str2);
-
-      if(compare2 == 0) {
-        printf("&");
-      }
-    }
     
     should_run = 0;
 
+    if(compare == 0) {
+      should_run = 0;
+    } else {
+
+      int pid = fork();
+      if (pid == 0) {
+        //execvp(char *command, char *params[])
+      } else {
+        if(args[2] != NULL) {
+          char str2[] = "&";
+          int compare2 = strcmp(args[2], str2);
+          if(compare2 == 0) {
+            wait(&status);
+          }
+        }
+      }
+    }
     
     //int pid = fork();
-    //if (pid == 0) {
-        //execvp(char *command, char *params[])
+        
     //} else {
         //if (command does not include &) {
           //wait
