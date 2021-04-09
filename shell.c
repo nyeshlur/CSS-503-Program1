@@ -46,8 +46,6 @@ int main(void)
       }
     }
     
-
-    //printf("%c\n", theCommand[0]);
     should_run = 0;
 
     
