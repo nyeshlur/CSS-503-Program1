@@ -15,6 +15,7 @@ gcc shell.c
 #include <stdlib.h>
 #include <sys/types.h> 
 #include <fcntl.h>
+#include <stdbool.h>
 
 #define MAX_LINE 80 /* The maximum length command */
 
@@ -31,23 +32,19 @@ int main(void)
     char theCommand[MAX_LINE];
     fgets(theCommand, sizeof(theCommand), stdin);
 
+    bool ampersandFlag = 0;
+
     char *word = strtok(theCommand, " \n");
-    args[0] = word;
 
-    word = strtok(NULL, " \n");
-
-
-    if(word != NULL) {
-      int compareAmpersand = strcmp(word, "&");
-      if (compareAmpersand == 0) {
-        args[1] = NULL;
-      } else {
-        args[1] = word;
+    for (int i = 0; word != NULL; i++) {
+        int compareAmpersand = strcmp(word, "&");
+        if(compareAmpersand == 0) {
+          args[i] = NULL;
+          ampersandFlag = 1;
+        } else {
+          args[i] = word;
+        }
         word = strtok(NULL, " \n");
-        args[2] = NULL;
-      }
-    } else {
-      args[1] = NULL;
     }
     
 
@@ -60,20 +57,19 @@ int main(void)
 
       int pid = fork();
       if (pid == 0) {
-        /*
-    if(word != NULL) {
-      int inputRedirect = strcmp(word, "<");
-      int outputRedirect = strcmp(word, ">");
-      if(inputRedirect == 0) {
-        word = strtok(NULL, " \n");
-        int fd = open(word, O_WRONLY | O_APPEND);
-        dup2(fd, 1);
+        
+      //int inputRedirect = strcmp(args[1], "<");
+      int outputRedirect = strcmp(args[1], ">");
+      if(outputRedirect == 0) {
+        mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+        int fd = creat("out.txt", mode);
+        dup2(fd, STDOUT_FILENO);
+        args[1] = NULL;
+        args[2] = NULL;
       }
-    }
-*/
         execvp(args[0], args);
       } else {
-        if(word == NULL) {
+        if(ampersandFlag == 0) {
           wait(&status);
         }
       }
@@ -85,6 +81,8 @@ int main(void)
     * (2) the child process will invoke execvp()
     * (3) parent will invoke wait() unless command included &
     */
+
+   //memset(args, )
   }
   return 0;
 }
