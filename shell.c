@@ -13,6 +13,8 @@ gcc shell.c
 #include <string.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <sys/types.h> 
+#include <fcntl.h>
 
 #define MAX_LINE 80 /* The maximum length command */
 
@@ -33,6 +35,7 @@ int main(void)
     args[0] = word;
 
     word = strtok(NULL, " \n");
+
 
     if(word != NULL) {
       int compareAmpersand = strcmp(word, "&");
@@ -57,6 +60,17 @@ int main(void)
 
       int pid = fork();
       if (pid == 0) {
+        /*
+    if(word != NULL) {
+      int inputRedirect = strcmp(word, "<");
+      int outputRedirect = strcmp(word, ">");
+      if(inputRedirect == 0) {
+        word = strtok(NULL, " \n");
+        int fd = open(word, O_WRONLY | O_APPEND);
+        dup2(fd, 1);
+      }
+    }
+*/
         execvp(args[0], args);
       } else {
         if(word == NULL) {
