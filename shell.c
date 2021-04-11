@@ -7,6 +7,7 @@ gcc shell.c
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define MAX_LINE 80 /* The maximum length command */
 
@@ -33,8 +34,6 @@ int main(void)
     //printf("%s %s", args[0], args[1]);
     char str1[] = "exit";
     int compare = strcmp(args[0], str1);
-    
-    should_run = 0;
 
     if(compare == 0) {
       should_run = 0;
@@ -42,25 +41,14 @@ int main(void)
 
       int pid = fork();
       if (pid == 0) {
-        //execvp(char *command, char *params[])
+        execvp(args[0], args);
+        printf("here");
       } else {
-        if(args[2] != NULL) {
-          char str2[] = "&";
-          int compare2 = strcmp(args[2], str2);
-          if(compare2 == 0) {
-            wait(&status);
-          }
+        if(args[2] == NULL) {
+          wait(&status);
         }
       }
     }
-    
-    //int pid = fork();
-        
-    //} else {
-        //if (command does not include &) {
-          //wait
-        //}
-    //}
     
     /**
     * After reading user input, the steps are:
