@@ -58,16 +58,24 @@ int main(void)
       int pid = fork();
       if (pid == 0) {
         
-      //int inputRedirect = strcmp(args[1], "<");
       int outputRedirect = strcmp(args[1], ">");
       if(outputRedirect == 0) {
         mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-        int fd = creat("out.txt", mode);
+        int fd = creat(args[2], mode);
         dup2(fd, STDOUT_FILENO);
         args[1] = NULL;
         args[2] = NULL;
       }
+
+      int inputRedirect = strcmp(args[1], "<");
+      if(inputRedirect == 0) {
+        int fd2 = open(args[2], O_WRONLY | O_APPEND);
+        dup2(STDIN_FILENO, fd2);
+        args[1] = NULL;
+        args[2] = NULL;
+      }
         execvp(args[0], args);
+
       } else {
         if(ampersandFlag == 0) {
           wait(&status);
@@ -75,12 +83,6 @@ int main(void)
       }
     }
     
-    /**
-    * After reading user input, the steps are:
-    * (1) fork a child process using fork()
-    * (2) the child process will invoke execvp()
-    * (3) parent will invoke wait() unless command included &
-    */
 
    //memset(args, )
   }
