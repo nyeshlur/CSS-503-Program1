@@ -1,5 +1,9 @@
 /*
+Program 1
+Written by Nayana Yeshlur
+Base Code provided by OSC 10th edition textbook
 gcc shell.c
+./a.out
 */
 
 
@@ -8,6 +12,7 @@ gcc shell.c
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <stdlib.h>
 
 #define MAX_LINE 80 /* The maximum length command */
 
@@ -26,12 +31,23 @@ int main(void)
 
     char *word = strtok(theCommand, " \n");
     args[0] = word;
-    word = strtok(NULL, " \n");
-    args[1] = word;
-    word = strtok(NULL, " \n");
-    args[2] = word;
 
-    //printf("%s %s", args[0], args[1]);
+    word = strtok(NULL, " \n");
+
+    if(word != NULL) {
+      int compareAmpersand = strcmp(word, "&");
+      if (compareAmpersand == 0) {
+        args[1] = NULL;
+      } else {
+        args[1] = word;
+        word = strtok(NULL, " \n");
+        args[2] = NULL;
+      }
+    } else {
+      args[1] = NULL;
+    }
+    
+
     char str1[] = "exit";
     int compare = strcmp(args[0], str1);
 
@@ -42,9 +58,8 @@ int main(void)
       int pid = fork();
       if (pid == 0) {
         execvp(args[0], args);
-        printf("here");
       } else {
-        if(args[2] == NULL) {
+        if(word == NULL) {
           wait(&status);
         }
       }
