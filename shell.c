@@ -78,20 +78,19 @@ int main(void)
         }
       }
       
-      int historyCompare = strcmp(args[0], "!! \n");
-      printf("%d", historyCompare);
-      fflush(stdout);
-      /*
+      int historyCompare = strcmp(args[0], "!!");
+      
       if(historyCompare == 0) {
         execvp(history[0], history);
       } else {
-
-        //for(int i = 0; i < sizeof(args); i++) {
+        
+        for(int i = 0; i < sizeof(args); i++) {
             //history[i] = args[i];
-        //}
+        }
+        
         execvp(args[0], args);
       }
-      */
+      
         execvp(args[0], args);
 
       } else {
@@ -102,7 +101,7 @@ int main(void)
     }
     
 
-   //memset(args, )
+   memset(args, 0, sizeof(args));
   }
   return 0;
 }
