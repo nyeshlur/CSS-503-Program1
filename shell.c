@@ -59,39 +59,43 @@ int main(void)
       int pid = fork();
       if (pid == 0) {
 
-      if(args[1] != NULL) {
-        int outputRedirect = strcmp(args[1], ">");
-        if(outputRedirect == 0) {
-          mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-          int fd = creat(args[2], mode);
-          dup2(fd, STDOUT_FILENO);
-          args[1] = NULL;
-          args[2] = NULL;
-        }
-      
-        int inputRedirect = strcmp(args[1], "<");
-        if(inputRedirect == 0) {
-          int fd2 = open(args[2], O_RDONLY);
-          dup2(fd2, 0);
-          args[1] = NULL;
-          args[2] = NULL;
-        }
-      }
-      
-      int historyCompare = strcmp(args[0], "!!");
-      
-      if(historyCompare == 0) {
-        execvp(history[0], history);
-      } else {
+        if(args[1] != NULL) {
+
+          int outputRedirect = strcmp(args[1], ">");
+          if(outputRedirect == 0) {
+            mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+            int fd = creat(args[2], mode);
+            dup2(fd, 1);
+            args[1] = NULL;
+            args[2] = NULL;
+          }
         
-        for(int i = 0; i < sizeof(args); i++) {
-            //history[i] = args[i];
+          int inputRedirect = strcmp(args[1], "<");
+          if(inputRedirect == 0) {
+            int fd2 = open(args[2], O_RDONLY);
+            dup2(fd2, 0);
+            args[1] = NULL;
+            args[2] = NULL;
+          }
+
         }
         
-        execvp(args[0], args);
-      }
-      
-        execvp(args[0], args);
+        int historyCompare = strcmp(args[0], "!!");
+        
+        if(historyCompare == 0) {
+          execvp(history[0], history);
+        } else {
+          
+          for(int i = 0; i < sizeof(args); i++) {
+            //history[i] = temp;
+          }
+          
+          execvp(args[0], args);
+        }
+        
+          //execvp(args[0], args);
+
+          exit(0);
 
       } else {
         if(ampersandFlag == 0) {
