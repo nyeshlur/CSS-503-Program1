@@ -25,10 +25,11 @@ int main(void)
   int should_run = 1; /* flag to determine when to exit program */
   int status;
 
+  char *history[MAX_LINE/2 + 1]; //historical command line arguments
+
   while (should_run) {
     printf("osh>");
     fflush(stdout);
-    char historyCommand[] = "";
     
     char theCommand[MAX_LINE];
     fgets(theCommand, sizeof(theCommand), stdin);
@@ -37,10 +38,6 @@ int main(void)
 
     char *word = strtok(theCommand, " \n");
 
-    int historyCompare = strcmp(word, "!!");
-    if(historyCompare == 0) {
-      theCommand = historyCommand;
-    }
 
     for (int i = 0; word != NULL; i++) {
         int compareAmpersand = strcmp(word, "&");
@@ -64,23 +61,30 @@ int main(void)
       int pid = fork();
       if (pid == 0) {
         
-      int outputRedirect = strcmp(args[1], ">");
-      if(outputRedirect == 0) {
-        mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-        int fd = creat(args[2], mode);
-        dup2(fd, STDOUT_FILENO);
-        args[1] = NULL;
-        args[2] = NULL;
-      }
+        int outputRedirect = strcmp(args[1], ">");
+        if(outputRedirect == 0) {
+          mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+          int fd = creat(args[2], mode);
+          dup2(fd, STDOUT_FILENO);
+          args[1] = NULL;
+          args[2] = NULL;
+        }
 
-      int inputRedirect = strcmp(args[1], "<");
-      if(inputRedirect == 0) {
-        int fd2 = open(args[2], O_RDONLY);
-        dup2(fd2, 0);
-        args[1] = NULL;
-        args[2] = NULL;
-      }
-        execvp(args[0], args);
+        int inputRedirect = strcmp(args[1], "<");
+        if(inputRedirect == 0) {
+          int fd2 = open(args[2], O_RDONLY);
+          dup2(fd2, 0);
+          args[1] = NULL;
+          args[2] = NULL;
+        }
+
+        int historyCompare = strcmp(args[0], "!!");
+        if(historyCompare == 0) {
+            execvp(history[0], history);
+        } else {
+            execvp(args[0], args);
+        }
+        
 
       } else {
         if(ampersandFlag == 0) {
