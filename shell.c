@@ -28,6 +28,7 @@ int main(void)
   while (should_run) {
     printf("osh>");
     fflush(stdout);
+    char historyCommand[] = "";
     
     char theCommand[MAX_LINE];
     fgets(theCommand, sizeof(theCommand), stdin);
@@ -35,6 +36,11 @@ int main(void)
     bool ampersandFlag = 0;
 
     char *word = strtok(theCommand, " \n");
+
+    int historyCompare = strcmp(word, "!!");
+    if(historyCompare == 0) {
+      theCommand = historyCommand;
+    }
 
     for (int i = 0; word != NULL; i++) {
         int compareAmpersand = strcmp(word, "&");
@@ -69,8 +75,8 @@ int main(void)
 
       int inputRedirect = strcmp(args[1], "<");
       if(inputRedirect == 0) {
-        int fd2 = open(args[2], O_WRONLY | O_APPEND);
-        dup2(STDIN_FILENO, fd2);
+        int fd2 = open(args[2], O_RDONLY);
+        dup2(fd2, 0);
         args[1] = NULL;
         args[2] = NULL;
       }
