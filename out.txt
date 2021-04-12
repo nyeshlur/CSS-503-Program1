@@ -2,3 +2,4 @@ a.out
 out.txt
 README.md
 shell.c
+test.txt
