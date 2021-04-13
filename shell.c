@@ -22,8 +22,9 @@ int main(void)
   char *args[MAX_LINE/2 + 1]; /* command line arguments */
   int should_run = 1; /* flag to determine when to exit program */
   int status;
+  char history[MAX_LINE];
 
-  char *history[MAX_LINE/2 + 1];
+  //char *history[MAX_LINE/2 + 1];
 
   while (should_run) {
     printf("osh>");
@@ -35,6 +36,14 @@ int main(void)
     bool ampersandFlag = 0;
 
     char *word = strtok(theCommand, " \n");
+
+    int historyCompare = strcmp(word, "!!");
+      if(historyCompare == 0) {
+        memcpy(theCommand, history, MAX_LINE);
+        word = strtok(theCommand, " \n");
+      } else {
+        memcpy(history, theCommand, MAX_LINE);
+      }
 
 
     for (int i = 0; word != NULL; i++) {
@@ -59,6 +68,28 @@ int main(void)
       int pid = fork();
       if (pid == 0) {
 
+        if(args[1] != NULL) {
+          int outputRedirect = strcmp(args[1], ">");
+          int inputRedirect = strcmp(args[1], "<");
+
+          if(outputRedirect == 0) {
+            mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+            int fd = creat(args[2], mode);
+            dup2(fd, 1);
+            args[1] = NULL;
+            args[2] = NULL;
+          }
+
+          if(inputRedirect == 0) {
+            int fd2 = open(args[2], O_RDONLY);
+            dup2(fd2, 0);
+            args[1] = NULL;
+            args[2] = NULL;
+          }
+        }
+
+
+/*
           for(int i = 0; i < MAX_LINE/2 + 1; i++) {
               if(args[i] != NULL) {
                 int outputRedirect = strcmp(args[i], ">");
@@ -80,8 +111,9 @@ int main(void)
                 }
               }
           }
+          */
         
-        
+        /*
         int historyCompare = strcmp(args[0], "!!");
         
         if(historyCompare == 0) {
@@ -90,14 +122,15 @@ int main(void)
         } else {
           
           for(int i = 0; i < MAX_LINE/2 + 1; i++) {
+
             //history[i] = args[i];
             //memcpy(history[i], args[i], MAX_LINE/2 + 1);
           }
           
           execvp(args[0], args);
         }
-        
-          //execvp(args[0], args);
+        */
+          execvp(args[0], args);
 
           exit(0);
 
