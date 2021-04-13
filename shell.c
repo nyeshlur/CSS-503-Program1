@@ -30,18 +30,21 @@ int main(void)
     
     char theCommand[MAX_LINE];
     fgets(theCommand, sizeof(theCommand), stdin);
+    char copyCommand[MAX_LINE];
+    memcpy(copyCommand, theCommand, MAX_LINE);
 
     bool ampersandFlag = 0;
 
-    char *word = strtok(theCommand, " \n");
+    char *word = strtok(copyCommand, " \n");
 
     int historyCompare = strcmp(word, "!!");
 
       if(historyCompare == 0) {
         memcpy(theCommand, history, MAX_LINE);
-        //word = strtok(theCommand, " \n");
+        word = strtok(theCommand, " \n");
       } else {
         memcpy(history, theCommand, MAX_LINE);
+        word = strtok(theCommand, " \n");
       }
 
 
