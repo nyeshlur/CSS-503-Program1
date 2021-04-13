@@ -59,26 +59,28 @@ int main(void)
       int pid = fork();
       if (pid == 0) {
 
-        if(args[1] != NULL) {
+          for(int i = 0; i < MAX_LINE/2 + 1; i++) {
+            if(args[i] != NULL) {
+              int outputRedirect = strcmp(args[i], ">");
+              int inputRedirect = strcmp(args[i], "<");
 
-          int outputRedirect = strcmp(args[1], ">");
-          if(outputRedirect == 0) {
-            mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-            int fd = creat(args[2], mode);
-            dup2(fd, 1);
-            args[1] = NULL;
-            args[2] = NULL;
+              if(outputRedirect == 0) {
+                mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+                int fd = creat(args[i+1], mode);
+                dup2(fd, 1);
+                args[i] = NULL;
+                args[i+1] = NULL;
+              }
+
+              if(inputRedirect == 0) {
+                int fd2 = open(args[i+1], O_RDONLY);
+                dup2(fd2, 0);
+                args[i] = NULL;
+                args[i+1] = NULL;
+              }
+            }
           }
         
-          int inputRedirect = strcmp(args[1], "<");
-          if(inputRedirect == 0) {
-            int fd2 = open(args[2], O_RDONLY);
-            dup2(fd2, 0);
-            args[1] = NULL;
-            args[2] = NULL;
-          }
-
-        }
         
         int historyCompare = strcmp(args[0], "!!");
         
