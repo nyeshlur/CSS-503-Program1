@@ -39,6 +39,8 @@ int main(void)
 
     int historyCompare = strcmp(word, "!!");
 
+      //Checks to see if the history command was called and then either copies history into theCommand
+      //or theCommand into history (if not !!)
       if(historyCompare == 0) {
         memcpy(theCommand, history, MAX_LINE);
         word = strtok(theCommand, " \n");
@@ -47,7 +49,8 @@ int main(void)
         word = strtok(theCommand, " \n");
       }
 
-
+    //Parses out everything from theCommand and puts it into args[]
+    //except & which just switches a flag
     for (int i = 0; word != NULL; i++) {
         int compareAmpersand = strcmp(word, "&");
         if(compareAmpersand == 0) {
@@ -62,7 +65,7 @@ int main(void)
 
     char str1[] = "exit";
     int compare = strcmp(args[0], str1);
-
+    //if exit, stop the loop and exit the program
     if(compare == 0) {
       should_run = 0;
     } else {
@@ -70,18 +73,24 @@ int main(void)
       int pid = fork();
       if (pid == 0) {
 
-        if(args[1] != NULL) {
-          int outputRedirect = strcmp(args[1], ">");
-          int inputRedirect = strcmp(args[1], "<");
-
-          if(outputRedirect == 0) {
-            mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-            int fd = creat(args[2], mode);
-            dup2(fd, 1);
-            args[1] = NULL;
-            args[2] = NULL;
+        //generalized output redirection
+        for(int i = 0; i < 4; i++) {
+          if(args[i] != NULL) {
+            int outputRedirect = strcmp(args[i], ">");
+            if(outputRedirect == 0) {
+              mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+              int fd = creat(args[(i + 1)], mode);
+              dup2(fd, 1);
+              args[i] = NULL;
+              args[(i + 1)] = NULL;
+            }
           }
-
+        }
+        
+/*
+        //hardcode input redirection
+        if(args[1] != NULL) {
+          int inputRedirect = strcmp(args[1], "<");
           if(inputRedirect == 0) {
             int fd2 = open(args[2], O_RDONLY);
             dup2(fd2, 0);
@@ -89,25 +98,20 @@ int main(void)
             args[2] = NULL;
           }
         }
-
-        int pipeCheck = strcmp(args[2], ">");
-        if(pipeCheck == 0) {
-          enum {READ, WRITE};
-          pid_t pid2;
-          int pipeFD[2];
-
-          if (pipe(pipeFD) < 0) {
-            perror("Error in creating pipe");
-            exit(EXIT_FAILURE);
-          }
-
-          pid2 = fork();
-
-          if(pid2 == 0) {
-            
+*/
+        //generalized input redirection
+        for(int i = 0; i < 4; i++) {
+          if(args[i] != NULL) {
+            int inputRedirect = strcmp(args[i], ">");
+            if(inputRedirect == 0) {
+              int fd2 = open(args[(i + 1)], O_RDONLY);
+              dup2(fd2, 0);
+              args[i] = NULL;
+              args[(i + 1)] = NULL;
+            }
           }
         }
-        
+
           execvp(args[0], args);
 
           exit(0);
