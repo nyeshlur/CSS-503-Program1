@@ -24,8 +24,6 @@ int main(void)
   int status;
   char history[MAX_LINE];
 
-  //char *history[MAX_LINE/2 + 1];
-
   while (should_run) {
     printf("osh>");
     fflush(stdout);
@@ -38,9 +36,10 @@ int main(void)
     char *word = strtok(theCommand, " \n");
 
     int historyCompare = strcmp(word, "!!");
+
       if(historyCompare == 0) {
         memcpy(theCommand, history, MAX_LINE);
-        word = strtok(theCommand, " \n");
+        //word = strtok(theCommand, " \n");
       } else {
         memcpy(history, theCommand, MAX_LINE);
       }
@@ -113,23 +112,6 @@ int main(void)
           }
           */
         
-        /*
-        int historyCompare = strcmp(args[0], "!!");
-        
-        if(historyCompare == 0) {
-          printf("%s", history[0]);
-          execvp(history[0], history);
-        } else {
-          
-          for(int i = 0; i < MAX_LINE/2 + 1; i++) {
-
-            //history[i] = args[i];
-            //memcpy(history[i], args[i], MAX_LINE/2 + 1);
-          }
-          
-          execvp(args[0], args);
-        }
-        */
           execvp(args[0], args);
 
           exit(0);
