@@ -87,22 +87,11 @@ int main(void)
           }
         }
         
-/*
-        //hardcode input redirection
-        if(args[1] != NULL) {
-          int inputRedirect = strcmp(args[1], "<");
-          if(inputRedirect == 0) {
-            int fd2 = open(args[2], O_RDONLY);
-            dup2(fd2, 0);
-            args[1] = NULL;
-            args[2] = NULL;
-          }
-        }
-*/
+
         //generalized input redirection
         for(int i = 0; i < 4; i++) {
           if(args[i] != NULL) {
-            int inputRedirect = strcmp(args[i], ">");
+            int inputRedirect = strcmp(args[i], "<");
             if(inputRedirect == 0) {
               int fd2 = open(args[(i + 1)], O_RDONLY);
               dup2(fd2, 0);

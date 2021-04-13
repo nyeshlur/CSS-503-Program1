@@ -1,0 +1,5 @@
+a.out
+junk.txt
+out.txt
+README.md
+shell.c
