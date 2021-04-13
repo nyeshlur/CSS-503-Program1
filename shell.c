@@ -60,36 +60,38 @@ int main(void)
       if (pid == 0) {
 
           for(int i = 0; i < MAX_LINE/2 + 1; i++) {
-            if(args[i] != NULL) {
-              int outputRedirect = strcmp(args[i], ">");
-              int inputRedirect = strcmp(args[i], "<");
+              if(args[i] != NULL) {
+                int outputRedirect = strcmp(args[i], ">");
+                int inputRedirect = strcmp(args[i], "<");
 
-              if(outputRedirect == 0) {
-                mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-                int fd = creat(args[i+1], mode);
-                dup2(fd, 1);
-                args[i] = NULL;
-                args[i+1] = NULL;
-              }
+                if(outputRedirect == 0) {
+                  mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+                  int fd = creat(args[i+1], mode);
+                  dup2(fd, 1);
+                  args[i] = NULL;
+                  args[i+1] = NULL;
+                }
 
-              if(inputRedirect == 0) {
-                int fd2 = open(args[i+1], O_RDONLY);
-                dup2(fd2, 0);
-                args[i] = NULL;
-                args[i+1] = NULL;
+                if(inputRedirect == 0) {
+                  int fd2 = open(args[i+1], O_RDONLY);
+                  dup2(fd2, 0);
+                  args[i] = NULL;
+                  args[i+1] = NULL;
+                }
               }
-            }
           }
         
         
         int historyCompare = strcmp(args[0], "!!");
         
         if(historyCompare == 0) {
+          printf("%s", history[0]);
           execvp(history[0], history);
         } else {
           
-          for(int i = 0; i < sizeof(args); i++) {
-            //history[i] = temp;
+          for(int i = 0; i < MAX_LINE/2 + 1; i++) {
+            //history[i] = args[i];
+            //memcpy(history[i], args[i], MAX_LINE/2 + 1);
           }
           
           execvp(args[0], args);
