@@ -102,30 +102,11 @@ int main(void)
           }
 
           pid2 = fork();
-        }
-/*
-          for(int i = 0; i < MAX_LINE/2 + 1; i++) {
-              if(args[i] != NULL) {
-                int outputRedirect = strcmp(args[i], ">");
-                int inputRedirect = strcmp(args[i], "<");
 
-                if(outputRedirect == 0) {
-                  mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-                  int fd = creat(args[i+1], mode);
-                  dup2(fd, 1);
-                  args[i] = NULL;
-                  args[i+1] = NULL;
-                }
-
-                if(inputRedirect == 0) {
-                  int fd2 = open(args[i+1], O_RDONLY);
-                  dup2(fd2, 0);
-                  args[i] = NULL;
-                  args[i+1] = NULL;
-                }
-              }
+          if(pid2 == 0) {
+            
           }
-          */
+        }
         
           execvp(args[0], args);
 
