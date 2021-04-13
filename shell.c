@@ -90,7 +90,19 @@ int main(void)
           }
         }
 
+        int pipeCheck = strcmp(args[2], ">");
+        if(pipeCheck == 0) {
+          enum {READ, WRITE};
+          pid_t pid2;
+          int pipeFD[2];
 
+          if (pipe(pipeFD) < 0) {
+            perror("Error in creating pipe");
+            exit(EXIT_FAILURE);
+          }
+
+          pid2 = fork();
+        }
 /*
           for(int i = 0; i < MAX_LINE/2 + 1; i++) {
               if(args[i] != NULL) {
