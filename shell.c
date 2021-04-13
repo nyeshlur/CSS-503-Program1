@@ -71,7 +71,7 @@ int main(void)
     } else {
 
       int pid = fork();
-      if (pid == 0) {
+      if (pid == 0) { //child
 
         //generalized output redirection
         for(int i = 0; i < 4; i++) {
@@ -101,11 +101,50 @@ int main(void)
           }
         }
 
+        for(int i = 0; i < 4; i++) {
+          if(args[i] != NULL) {
+            int pipeCheck = strcmp(args[i], "|");
+            if(pipeCheck == 0) {
+              enum{READ, WRITE};
+              pid_t pid2;
+              int pipeFD[2];
+
+              if (pipe(pipeFD) < 0)
+              {
+                perror("Error in creating pipe");
+                exit(EXIT_FAILURE);
+              }
+
+              pid2 = fork();
+
+              if(pid2 == 0) { //child
+                for(int j = i; j < 5; j++) {
+                  args[j] = NULL;
+                }
+                close(pipeFD[READ]); 
+                dup2(pipeFD[WRITE], 1);
+
+                execvp(args[0], args);
+
+              } else { //parent
+                  int status2;
+                  wait(&status2);
+
+                char buf[BUF_SIZE];
+                int n = read(pipeFD[READ], buf, BUF_SIZE);
+                buf[n] = '\0';
+                cout << buf;
+              }
+
+            }
+          }
+        }
+
           execvp(args[0], args);
 
           exit(0);
 
-      } else {
+      } else { //parent
         if(ampersandFlag == 0) {
           wait(&status);
         }
