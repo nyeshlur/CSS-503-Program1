@@ -83,11 +83,12 @@ int main(void)
       if (pid == 0) { //child
 
         //generalized output redirection
-        //int size = MAX_LINE/2 + 1;
         for(int i = 0; i < 4; i++) {
           if(args[i] != NULL) {
             int outputRedirect = strcmp(args[i], ">");
             if(outputRedirect == 0) {
+              printf("got here");
+              fflush(stdout);
               mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
               int fd = creat(args[(i + 1)], mode);
               dup2(fd, 1);
