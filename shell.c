@@ -111,7 +111,7 @@ int main(void)
           }
         }
 
-        //piping
+        //piping, fork a process from the child (create grandchild)
         for(int i = 0; i < 4; i++) {
           if(args[i] != NULL) {
             int pipeCheck = strcmp(args[i], "|");
