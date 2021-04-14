@@ -22,7 +22,7 @@ int main(void)
   char *args[MAX_LINE/2 + 1]; /* command line arguments */
   int should_run = 1; /* flag to determine when to exit program */
   int status;
-  char history[MAX_LINE];
+  char history[MAX_LINE] = "";
 
   while (should_run) {
     printf("osh>");
@@ -34,6 +34,7 @@ int main(void)
     memcpy(copyCommand, theCommand, MAX_LINE);
 
     bool ampersandFlag = 0;
+    bool emptyFlag = 0;
 
     char *word = strtok(copyCommand, " \n");
 
@@ -42,8 +43,14 @@ int main(void)
       //Checks to see if the history command was called and then either copies history into theCommand
       //or theCommand into history (if not !!)
       if(historyCompare == 0) {
-        memcpy(theCommand, history, MAX_LINE);
-        word = strtok(theCommand, " \n");
+        int historyEmpty = strcmp(history, "");
+        if(historyEmpty == 0) {
+          printf("History is empty.\n");
+          emptyFlag = 1;
+        } else {
+          memcpy(theCommand, history, MAX_LINE);
+          word = strtok(theCommand, " \n");
+        }
       } else {
         memcpy(history, theCommand, MAX_LINE);
         word = strtok(theCommand, " \n");
@@ -68,6 +75,8 @@ int main(void)
     //if exit, stop the loop and exit the program
     if(compare == 0) {
       should_run = 0;
+    }  else if (emptyFlag == 1) {
+      should_run = 1;
     } else {
 
       int pid = fork();
