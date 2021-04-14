@@ -30,6 +30,7 @@ int main(void)
     
     char theCommand[MAX_LINE];
     fgets(theCommand, sizeof(theCommand), stdin);
+
     char copyCommand[MAX_LINE];
     memcpy(copyCommand, theCommand, MAX_LINE);
 
@@ -87,8 +88,6 @@ int main(void)
           if(args[i] != NULL) {
             int outputRedirect = strcmp(args[i], ">");
             if(outputRedirect == 0) {
-              printf("got here");
-              fflush(stdout);
               mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
               int fd = creat(args[(i + 1)], mode);
               dup2(fd, 1);
