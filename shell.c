@@ -74,6 +74,7 @@ int main(void)
       if (pid == 0) { //child
 
         //generalized output redirection
+        //int size = MAX_LINE/2 + 1;
         for(int i = 0; i < 4; i++) {
           if(args[i] != NULL) {
             int outputRedirect = strcmp(args[i], ">");
@@ -128,6 +129,8 @@ int main(void)
                 dup2(pipeFD[WRITE], 1);
 
                 execvp(args[0], args);
+                perror("execvp unsuccessful");
+                exit(EXIT_FAILURE);
 
               } else { //child
                 int status2;
@@ -143,10 +146,9 @@ int main(void)
                 }
                 
                 
-                //rightArgs[0] = args[i + 1];
-                //rightArgs[1] = NULL;
-                //rightArgs[2] = NULL;
                 execvp(rightArgs[0], rightArgs);
+                perror("execvp unsuccessful");
+                exit(EXIT_FAILURE);
 
               }
 
@@ -155,8 +157,9 @@ int main(void)
         }
 
           execvp(args[0], args);
+          perror("execvp unsuccessful");
+          exit(EXIT_FAILURE);
 
-          exit(0);
 
       } else { //parent
         if(ampersandFlag == 0) {
