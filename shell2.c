@@ -53,7 +53,11 @@ int main(void)
             if(pid == 0) { //in child
             
 
-            for(int i = 0; i < 4; i++) {
+            //the problem line is below, if I use a number smaller than MAX_LINE / 2 + 1, it works but I can't use that number
+            //so I'm not sure why I can't check the entirety of args
+            //I've run into the same issue in almost all of the loops I have implemented
+            //I've pared down shell so that I can just illustrate the issue
+            for(int i = 0; i < (MAX_LINE / 2 + 1); i++) {
                 if(args[i] != NULL) {
                     int outputRedirect = strcmp(args[i], ">");
                     if(outputRedirect == 0) {
@@ -77,13 +81,7 @@ int main(void)
             
         }
         
-    /**
-    * After reading user input, the steps are:
-    * (1) fork a child process using fork()
-    * (2) the child process will invoke execvp()
-    * (3) parent will invoke wait() unless command included &
-    */
-        //memset(args, 0, sizeof(args));
+        memset(args, 0, sizeof(args));
     }
   return 0;
 }
