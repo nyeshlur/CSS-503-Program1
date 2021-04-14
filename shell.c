@@ -118,18 +118,18 @@ int main(void)
 
               pid2 = fork();
 
-              if(pid2 == 0) { //child
+              if(pid2 == 0) { //grandchild
+              
                 for(int j = i; j < 6; j++) {
                   args[j] = NULL;
                 }
+                
                 close(pipeFD[READ]); 
                 dup2(pipeFD[WRITE], 1);
 
-                printf("%s", args[0]);
-                fflush(stdout);
                 execvp(args[0], args);
 
-              } else { //parent
+              } else { //child
                 int status2;
                 wait(&status2);
 
@@ -137,14 +137,15 @@ int main(void)
 
                 close(pipeFD[WRITE]);
                 dup2(pipeFD[READ], 0);
-                char temp[] = "";
-                for(int j = 0; j <= i; j++) {
-                  strcpy(temp, args[j + i + 1]);
-                  rightArgs[j] = temp;
+                
+                for(int j = 0; j < i; j++) {
+                  rightArgs[j] = args[j + i + 1];
                 }
-
-                printf("hello%s", rightArgs[0]);
-                fflush(stdout);
+                
+                
+                //rightArgs[0] = args[i + 1];
+                //rightArgs[1] = NULL;
+                //rightArgs[2] = NULL;
                 execvp(rightArgs[0], rightArgs);
 
               }
