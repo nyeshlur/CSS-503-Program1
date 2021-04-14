@@ -101,6 +101,7 @@ int main(void)
           }
         }
 
+        //piping
         for(int i = 0; i < 4; i++) {
           if(args[i] != NULL) {
             int pipeCheck = strcmp(args[i], "|");
@@ -118,22 +119,34 @@ int main(void)
               pid2 = fork();
 
               if(pid2 == 0) { //child
-                for(int j = i; j < 5; j++) {
+                for(int j = i; j < 6; j++) {
                   args[j] = NULL;
                 }
                 close(pipeFD[READ]); 
                 dup2(pipeFD[WRITE], 1);
 
+                printf("%s", args[0]);
+                fflush(stdout);
                 execvp(args[0], args);
 
               } else { //parent
-                  int status2;
-                  wait(&status2);
+                int status2;
+                wait(&status2);
 
-                char buf[BUF_SIZE];
-                int n = read(pipeFD[READ], buf, BUF_SIZE);
-                buf[n] = '\0';
-                cout << buf;
+                char *rightArgs[MAX_LINE/2 + 1];
+
+                close(pipeFD[WRITE]);
+                dup2(pipeFD[READ], 0);
+                char temp[] = "";
+                for(int j = 0; j <= i; j++) {
+                  strcpy(temp, args[j + i + 1]);
+                  rightArgs[j] = temp;
+                }
+
+                printf("hello%s", rightArgs[0]);
+                fflush(stdout);
+                execvp(rightArgs[0], rightArgs);
+
               }
 
             }
