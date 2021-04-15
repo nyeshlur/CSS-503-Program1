@@ -22,7 +22,7 @@ int main(void)
   char *args[MAX_LINE/2 + 1]; /* command line arguments */
   int should_run = 1; /* flag to determine when to exit program */
   int status;
-  char history[MAX_LINE] = "";
+  char history[MAX_LINE] = ""; //used to store the last command executed
 
   while (should_run) {
     printf("osh>");
@@ -43,6 +43,7 @@ int main(void)
 
       //Checks to see if the history command was called and then either copies history into theCommand
       //or theCommand into history (if not !!)
+      //if history is empty, displays message indicating so
       if(historyCompare == 0) {
         int historyEmpty = strcmp(history, "");
         if(historyEmpty == 0) {

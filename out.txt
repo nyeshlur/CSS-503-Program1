@@ -1,9 +1,0 @@
-total 32
-drwxrwxr-x  3 nyeshlur nyeshlur   120 Apr 13 20:17 .
-drwx------ 13 nyeshlur nyeshlur  4096 Apr  7 17:34 ..
--rw-r--r--  1 nyeshlur nyeshlur     0 Apr 13 10:31 Àß7¯ý
--rwxrwxr-x  1 nyeshlur nyeshlur 13104 Apr 13 20:17 a.out
-drwxrwxr-x  8 nyeshlur nyeshlur   237 Apr 13 19:12 .git
--rw-r--r--  1 nyeshlur nyeshlur     0 Apr 13 19:59 out.txt
--rw-rw-r--  1 nyeshlur nyeshlur    18 Apr  7 17:34 README.md
--rw-rw-r--  1 nyeshlur nyeshlur  4753 Apr 13 20:16 shell.c
