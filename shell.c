@@ -4,7 +4,6 @@ Written by Nayana Yeshlur
 Base Code provided by OSC 10th edition textbook
 
 This program acts as a shell interface and executes user supplied commands.
-
 */
 
 #include <stdio.h>
