@@ -21,10 +21,14 @@ int main(void)
 {
   char *args[MAX_LINE/2 + 1]; /* command line arguments */
   int should_run = 1; /* flag to determine when to exit program */
-  int status;
   char history[MAX_LINE] = ""; //used to store the last command executed
 
   while (should_run) {
+
+    for (int i = 0; i < (MAX_LINE / 2 + 1); i++) {
+      args[i] = NULL;
+    } 
+
     printf("osh>");
     fflush(stdout);
     
@@ -43,34 +47,34 @@ int main(void)
 
     int historyCompare = strcmp(word, "!!");
 
-      //Checks to see if the history command was called and then either copies history into theCommand
-      //or theCommand into history (if not !!)
-      //if history is empty, displays message indicating so
-      if(historyCompare == 0) {
-        int historyEmpty = strcmp(history, "");
-        if(historyEmpty == 0) {
-          printf("History is empty.\n");
-          emptyFlag = 1;
-        } else {
-          memcpy(theCommand, history, MAX_LINE);
-          word = strtok(theCommand, " \n");
-        }
+    //Checks to see if the history command was called and then either copies history into theCommand
+    //or theCommand into history (if not !!)
+    //if history is empty, displays message indicating so
+    if(historyCompare == 0) {
+      int historyEmpty = strcmp(history, "");
+      if(historyEmpty == 0) {
+        printf("History is empty.\n");
+        emptyFlag = 1;
       } else {
-        memcpy(history, theCommand, MAX_LINE);
+        memcpy(theCommand, history, MAX_LINE);
         word = strtok(theCommand, " \n");
       }
+    } else {
+      memcpy(history, theCommand, MAX_LINE);
+      word = strtok(theCommand, " \n");
+    }
 
     //Parses out everything from theCommand and puts it into args[]
     //except & which just switches a flag
     for (int i = 0; word != NULL; i++) {
-        int compareAmpersand = strcmp(word, "&");
-        if(compareAmpersand == 0) {
-          args[i] = NULL;
-          ampersandFlag = 1;
-        } else {
-          args[i] = word;
-        }
-        word = strtok(NULL, " \n");
+      int compareAmpersand = strcmp(word, "&");
+      if(compareAmpersand == 0) {
+        args[i] = NULL;
+        ampersandFlag = 1;
+      } else {
+        args[i] = word;
+      }
+      word = strtok(NULL, " \n");
     }
     
 
@@ -81,7 +85,7 @@ int main(void)
       should_run = 0;
       //if the history command (!!) was inputted but there is no history, the user is prompted again
       //nothing is executed
-    }  else if (emptyFlag == 1) {
+    } else if (emptyFlag == 1) {
       should_run = 1;
     } else {
 
@@ -89,7 +93,7 @@ int main(void)
       if (pid == 0) { //child
 
         //generalized output redirection
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < (MAX_LINE / 2 + 1); i++) {
           if(args[i] != NULL) {
             int outputRedirect = strcmp(args[i], ">");
             if(outputRedirect == 0) {
@@ -104,7 +108,7 @@ int main(void)
         
 
         //generalized input redirection
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < (MAX_LINE / 2 + 1); i++) {
           if(args[i] != NULL) {
             int inputRedirect = strcmp(args[i], "<");
             if(inputRedirect == 0) {
@@ -117,7 +121,7 @@ int main(void)
         }
 
         //piping, fork a process from the child (create grandchild)
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < (MAX_LINE / 2 + 1); i++) {
           if(args[i] != NULL) {
             int pipeCheck = strcmp(args[i], "|");
             if(pipeCheck == 0) {
@@ -125,8 +129,7 @@ int main(void)
               pid_t pid2;
               int pipeFD[2];
 
-              if (pipe(pipeFD) < 0)
-              {
+              if (pipe(pipeFD) < 0) {
                 perror("Error in creating pipe");
                 exit(EXIT_FAILURE);
               }
@@ -136,7 +139,7 @@ int main(void)
               if(pid2 == 0) { //grandchild
               
                 //keeping everything to the left of the pipe and nulling out everything to the right
-                for(int j = i; j < 6; j++) {
+                for(int j = i; j < (MAX_LINE / 2 + 1); j++) {
                   args[j] = NULL;
                 }
                 
@@ -154,6 +157,10 @@ int main(void)
                 wait(&status2);
 
                 char *rightArgs[MAX_LINE/2 + 1];
+
+                for (int i = 0; i < (MAX_LINE / 2 + 1); i++) {
+                  rightArgs[i] = NULL;
+                } 
 
                 //close write side of pipe
                 //redirect read side from stdin to pipe
@@ -181,14 +188,12 @@ int main(void)
 
 
       } else { //parent
+        int status;
         if(ampersandFlag == 0) {
           wait(&status);
         }
       }
     }
-    
-
-   memset(args, 0, sizeof(args));
   }
   return 0;
 }
