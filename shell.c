@@ -2,8 +2,9 @@
 Program 1
 Written by Nayana Yeshlur
 Base Code provided by OSC 10th edition textbook
-gcc shell.c
-./a.out
+
+This program acts as a shell interface and executes user supplied commands.
+
 */
 
 #include <stdio.h>
@@ -28,9 +29,11 @@ int main(void)
     printf("osh>");
     fflush(stdout);
     
+    //reads in what was typed on the command line
     char theCommand[MAX_LINE];
     fgets(theCommand, sizeof(theCommand), stdin);
 
+    //copies theCommand into copyCommand
     char copyCommand[MAX_LINE];
     memcpy(copyCommand, theCommand, MAX_LINE);
 
@@ -77,6 +80,8 @@ int main(void)
     //if exit, stop the loop and exit the program
     if(compare == 0) {
       should_run = 0;
+      //if the history command (!!) was inputted but there is no history, the user is prompted again
+      //nothing is executed
     }  else if (emptyFlag == 1) {
       should_run = 1;
     } else {
@@ -131,6 +136,7 @@ int main(void)
 
               if(pid2 == 0) { //grandchild
               
+                //keeping everything to the left of the pipe and nulling out everything to the right
                 for(int j = i; j < 6; j++) {
                   args[j] = NULL;
                 }
