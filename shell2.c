@@ -57,7 +57,7 @@ int main(void)
             //so I'm not sure why I can't check the entirety of args
             //I've run into the same issue in almost all of the loops I have implemented
             //I've pared down shell so that I can just illustrate the issue
-            for(int i = 0; i < (MAX_LINE / 2 + 1); i++) {
+            for(int i = 0; i < 10; i++) {
                 if(args[i] != NULL) {
                     int outputRedirect = strcmp(args[i], ">");
                     if(outputRedirect == 0) {

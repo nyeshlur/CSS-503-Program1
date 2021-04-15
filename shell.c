@@ -85,7 +85,7 @@ int main(void)
       if (pid == 0) { //child
 
         //generalized output redirection
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < 5; i++) {
           if(args[i] != NULL) {
             int outputRedirect = strcmp(args[i], ">");
             if(outputRedirect == 0) {
@@ -100,7 +100,7 @@ int main(void)
         
 
         //generalized input redirection
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < 5; i++) {
           if(args[i] != NULL) {
             int inputRedirect = strcmp(args[i], "<");
             if(inputRedirect == 0) {
@@ -113,7 +113,7 @@ int main(void)
         }
 
         //piping, fork a process from the child (create grandchild)
-        for(int i = 0; i < 4; i++) {
+        for(int i = 0; i < 5; i++) {
           if(args[i] != NULL) {
             int pipeCheck = strcmp(args[i], "|");
             if(pipeCheck == 0) {
@@ -135,6 +135,8 @@ int main(void)
                   args[j] = NULL;
                 }
                 
+                //close read side of pipe
+                //redirect write side from stdout to pipe
                 close(pipeFD[READ]); 
                 dup2(pipeFD[WRITE], 1);
 
@@ -148,13 +150,15 @@ int main(void)
 
                 char *rightArgs[MAX_LINE/2 + 1];
 
+                //close write side of pipe
+                //redirect read side from stdin to pipe
                 close(pipeFD[WRITE]);
                 dup2(pipeFD[READ], 0);
                 
+                //copy everything right of the | symbol into rightArgs to be executed
                 for(int j = 0; j < i; j++) {
                   rightArgs[j] = args[j + i + 1];
                 }
-                
                 
                 execvp(rightArgs[0], rightArgs);
                 perror("execvp unsuccessful");
